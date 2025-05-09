@@ -1,8 +1,8 @@
 
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { Board, Column, Task } from '../types/kanban';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
+import { Board, Column, Task } from '../types/kanban';
 
 // Mock initial data
 const initialBoards: Board[] = [
