@@ -4,23 +4,249 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>task-board-weaver</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
+    <meta name="description" content="webcode.pp.ua Project" />
+    <meta name="author" content="webcode.pp.ua" />
 
     <meta property="og:title" content="task-board-weaver" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:description" content="webcode.pp.ua Project" />
+    <meta property="og:type" content="website" /><meta name="twitter:card" content="summary_large_image" />  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0OCIgaGVpZ2h0PSI0OCIgdmlld0JveD0iMCAwIDQ4IDQ4Ij48Y2lyY2xlIGN4PSIyNCIgY3k9IjI0IiByPSIyMS41IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBkPSJtMzIgMTZsLTQgMTZsLTQtMTZsLTQgMTZsLTQtMTYiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==">
   </head>
 
   <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="root"></div><script type="module" src="/src/main.tsx"></script>
+  
+<!-- Contact Developer Button and Popup -->
+<style>
+  #contact-dev-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    color: black;
+    border: 1px solid #b7b7b7;
+    box-sizing: border-box;
+    border-radius: 6px;
+    padding: 0 24px;
+    height: 44px;
+    line-height: 44px; /* Match the height for perfect centering */
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: -apple-system, BlinkMacSystemFont,  Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  #contact-dev-btn:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    border-color: #d0d0d0;
+  }
+  
+  #contact-dev-popup {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    width: 320px;
+    max-width: 90vw;
+    border: 1px solid #b7b7b7;
+    animation: popup-slide-up 0.2s ease-out;
+    font-family: -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  @keyframes popup-slide-up {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 10px);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+  }
+  
+  #contact-dev-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  #contact-dev-popup-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111;
+    margin: 0;
+  }
+  
+  #contact-dev-popup a {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+    color: #333;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    border: 1px solid transparent;
+  }
+  
+  #contact-dev-popup a:hover {
+    background-color: #f5f5f5;
+    border-color: #eaeaea;
+  }
+  
+  #contact-dev-popup a svg {
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  
+  #close-dev-popup {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background-color: #f1f1f1;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border: 1px solid #e5e5e5;
+  }
+
+  #close-dev-popup:hover {
+    background-color: #e5e5e5;
+  }
+  
+  #close-dev-popup svg {
+    width: 18px;
+    height: 18px;
+    color: #666;
+  }
+  
+  @media (max-width: 767px) {
+    #contact-dev-btn {
+      height: 46px;
+      line-height: 46px;
+      font-size: 16px;
+      border-radius: 8px;
+      bottom: 24px;
+      width: 200px;
+      border-width: 1px;
+    }
+    
+    #contact-dev-popup {
+      bottom: 24px;
+      width: 280px;
+      border-width: 1px;
+    }
+    
+    #close-dev-popup {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+    }
+    
+    #close-dev-popup svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+</style>
+
+<button id="contact-dev-btn" type="button">Contact Developer</button>
+
+<div id="contact-dev-popup">
+  <div id="contact-dev-popup-header">
+    <h3 id="contact-dev-popup-title">Contact Us</h3>
+    <div id="close-dev-popup">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </div>
+  </div>
+  <a href="mailto:1580509@gmail.com">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="M22 7l-10 5-10-5" />
+    </svg>
+    1580509@gmail.com
+  </a>
+  <a href="https://t.me/srgrzn" target="_blank">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0088cc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21.5 4.5L2.5 12.5L9.5 13.5L11.5 19.5L16.5 12.5L21.5 4.5Z" />
+    </svg>
+    @srgrzn
+  </a>
+</div>
+
+<script>
+  // Add debugging logs
+  console.log("Contact button script loaded");
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM fully loaded");
+    const contactBtn = document.getElementById('contact-dev-btn');
+    const contactPopup = document.getElementById('contact-dev-popup');
+    const closePopup = document.getElementById('close-dev-popup');
+    
+    console.log("Button element found:", !!contactBtn);
+    console.log("Popup element found:", !!contactPopup);
+    console.log("Close button found:", !!closePopup);
+    
+    if (contactBtn && contactPopup && closePopup) {
+      contactBtn.addEventListener('click', function(e) {
+        console.log("Contact button clicked");
+        e.stopPropagation();
+        if (contactPopup.style.display === 'block') {
+          contactPopup.style.display = 'none';
+          contactBtn.style.display = 'block';
+        } else {
+          contactPopup.style.display = 'block';
+          contactBtn.style.display = 'none'; // Hide button when popup is shown
+        }
+      });
+      
+      closePopup.addEventListener('click', function(e) {
+        console.log("Close button clicked");
+        e.stopPropagation();
+        contactPopup.style.display = 'none';
+        contactBtn.style.display = 'block'; // Show button again when popup is closed
+      });
+      
+      // Close popup when clicking outside
+      document.addEventListener('click', function(event) {
+        if (contactPopup.style.display === 'block' && 
+            !contactPopup.contains(event.target) && 
+            event.target !== contactBtn) {
+          console.log("Outside click detected, closing popup");
+          contactPopup.style.display = 'none';
+          contactBtn.style.display = 'block'; // Show button again
+        }
+      });
+    } else {
+      console.error("One or more required elements not found");
+    }
+  });
+</script>
   </body>
 </html>
