@@ -46,6 +46,13 @@ const KanbanBoard: React.FC = () => {
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     const { data } = active;
+    
+    console.log('⭐ Drag Start:', {
+      active,
+      activeId: active.id,
+      type: data?.current?.type,
+      containerId: data?.current?.sortable?.containerId
+    });
 
     if (data?.current?.type === 'column') {
       setActiveColumn(data.current.column);
@@ -60,6 +67,19 @@ const KanbanBoard: React.FC = () => {
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
+    
+    console.log('🔄 Drag Over:', {
+      active: {
+        id: active.id,
+        type: active.data.current?.type,
+        containerId: active.data.current?.sortable?.containerId
+      },
+      over: over ? {
+        id: over.id,
+        type: over.data.current?.type,
+        containerId: over.data.current?.sortable?.containerId
+      } : 'No over element'
+    });
     
     if (!over || !activeBoard) return;
     
@@ -80,7 +100,15 @@ const KanbanBoard: React.FC = () => {
     if (isActiveTask && isOverTask) {
       // Get the column IDs
       const activeColumnId = active.data.current?.sortable?.containerId;
+      // Виправляємо тут - беремо containerId з over (потрібно знати, до якої колонки належить цільовий таск)
       const overColumnId = over.data.current?.sortable?.containerId;
+      
+      console.log('📌 Dragging between tasks:', { 
+        activeColumnId, 
+        overColumnId,
+        activeTaskId: activeId,
+        overTaskId: overId
+      });
       
       if (!activeColumnId || !overColumnId) return;
       
@@ -165,6 +193,20 @@ const KanbanBoard: React.FC = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
+    console.log('🏁 Drag End (FULL):', event);
+    console.log('🏁 Drag End:', {
+      active: {
+        id: active.id,
+        type: active.data.current?.type,
+        containerId: active.data.current?.sortable?.containerId
+      },
+      over: over ? {
+        id: over.id,
+        type: over.data.current?.type,
+        containerId: over.data.current?.sortable?.containerId
+      } : 'No over element'
+    });
+    
     if (!over || !activeBoard) {
       setActiveColumn(null);
       setActiveTask(null);
@@ -182,6 +224,9 @@ const KanbanBoard: React.FC = () => {
     
     // Handle column reordering
     const isActiveColumn = active.data.current?.type === 'column';
+    const isActiveTask = active.data.current?.type === 'task';
+    const isOverColumn = over.data.current?.type === 'column';
+    const isOverTask = over.data.current?.type === 'task';
     
     if (isActiveColumn && activeBoard) {
       const activeColumnIndex = activeBoard.columns.findIndex(col => col.id === activeId);
@@ -190,6 +235,143 @@ const KanbanBoard: React.FC = () => {
       if (activeColumnIndex !== -1 && overColumnIndex !== -1) {
         moveColumn(activeBoard.id, activeColumnIndex, overColumnIndex);
       }
+    }
+    
+    // Додаємо логіку для обробки кінця перетягування таска на колонку
+    if (isActiveTask && isOverColumn) {
+      const activeColumnId = active.data.current?.sortable?.containerId;
+      const overColumnId = overId as string;
+      
+      if (!activeColumnId || !overColumnId) {
+        setActiveColumn(null);
+        setActiveTask(null);
+        return;
+      }
+      
+      const activeColumnIndex = activeBoard.columns.findIndex(col => col.id === activeColumnId);
+      const overColumnIndex = activeBoard.columns.findIndex(col => col.id === overColumnId);
+      
+      if (activeColumnIndex === -1 || overColumnIndex === -1) {
+        setActiveColumn(null);
+        setActiveTask(null);
+        return;
+      }
+      
+      const activeColumn = activeBoard.columns[activeColumnIndex];
+      const overColumn = activeBoard.columns[overColumnIndex];
+      
+      if (!activeColumn || !overColumn) {
+        setActiveColumn(null);
+        setActiveTask(null);
+        return;
+      }
+      
+      const activeTaskIndex = activeColumn.tasks.findIndex(
+        task => task.id === activeId
+      );
+      
+      if (activeTaskIndex === -1) {
+        setActiveColumn(null);
+        setActiveTask(null);
+        return;
+      }
+      
+      console.log('📦 Moving Task:', {
+        boardId: activeBoard.id,
+        fromColumnId: activeColumnId,
+        toColumnId: overColumnId,
+        taskIndex: activeTaskIndex,
+        toPosition: overColumn.tasks.length,
+        task: activeId
+      });
+      
+      moveTask(
+        activeBoard.id,
+        activeColumnId,
+        overColumnId,
+        activeTaskIndex,
+        overColumn.tasks.length
+      );
+      
+      console.log('✅ Task Move Completed');
+    }
+    
+    // Обробляємо перетягування таску на інший таск в (можливо) іншій колонці
+    if (isActiveTask && isOverTask) {
+      const activeColumnId = active.data.current?.sortable?.containerId;
+      // Виправляємо тут - використовуємо containerId з over
+      const overColumnId = over.data.current?.sortable?.containerId;
+      
+      console.log('📦 Task to Task End:', {
+        activeColumnId,
+        overColumnId,
+        activeTaskId: activeId,
+        overTaskId: overId
+      });
+      
+      if (!activeColumnId || !overColumnId) {
+        setActiveColumn(null);
+        setActiveTask(null);
+        return;
+      }
+      
+      const activeColumnIndex = activeBoard.columns.findIndex(col => 
+        // Шукаємо колонку за ID або за ідентифікатором Sortable
+        col.id === activeColumnId || `Sortable-${activeBoard.columns.indexOf(col)}` === activeColumnId
+      );
+      
+      const overColumnIndex = activeBoard.columns.findIndex(col => 
+        col.id === overColumnId || `Sortable-${activeBoard.columns.indexOf(col)}` === overColumnId
+      );
+      
+      console.log('📊 Column Indices:', { activeColumnIndex, overColumnIndex });
+      
+      if (activeColumnIndex === -1 || overColumnIndex === -1) {
+        setActiveColumn(null);
+        setActiveTask(null);
+        return;
+      }
+      
+      const activeColumn = activeBoard.columns[activeColumnIndex];
+      const overColumn = activeBoard.columns[overColumnIndex];
+      
+      if (!activeColumn || !overColumn) {
+        setActiveColumn(null);
+        setActiveTask(null);
+        return;
+      }
+      
+      const activeTaskIndex = activeColumn.tasks.findIndex(
+        task => task.id === activeId
+      );
+      
+      const overTaskIndex = overColumn.tasks.findIndex(
+        task => task.id === overId
+      );
+      
+      if (activeTaskIndex === -1 || overTaskIndex === -1) {
+        setActiveColumn(null);
+        setActiveTask(null);
+        return;
+      }
+      
+      console.log('📦 Moving Task between columns:', {
+        boardId: activeBoard.id,
+        fromColumnId: activeColumn.id,
+        toColumnId: overColumn.id,
+        taskIndex: activeTaskIndex,
+        toPosition: overTaskIndex,
+        task: activeId
+      });
+      
+      // Переміщення таску
+      moveTask(
+        activeBoard.id,
+        activeColumn.id,
+        overColumn.id,
+        activeTaskIndex,
+        overTaskIndex
+      );
     }
     
     setActiveColumn(null);

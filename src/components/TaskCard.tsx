@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Task } from '../types/kanban';
@@ -17,11 +16,22 @@ interface TaskCardProps {
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, columnId }) => {
+  useEffect(() => {
+    console.log('TaskCard mounted:', {
+      id: task.id,
+      title: task.title,
+      columnId
+    });
+  }, [task, columnId]);
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id,
     data: {
       type: 'task',
       task,
+      sortable: {
+        containerId: columnId,
+      },
     },
   });
 
@@ -52,20 +62,20 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, columnId }) => {
     opacity: isDragging ? 0.5 : 1,
   };
 
-  const dateOptions: Intl.DateTimeFormatOptions = { 
-    year: 'numeric', 
-    month: 'short', 
-    day: 'numeric' 
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <div 
-          ref={setNodeRef} 
-          style={style} 
-          {...attributes} 
-          {...listeners} 
+        <div
+          ref={setNodeRef}
+          style={style}
+          {...attributes}
+          {...listeners}
           className="mb-3 touch-none"
         >
           <Card className="hover:border-kanban-primary transition-colors">
@@ -76,8 +86,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, columnId }) => {
               )}
             </CardContent>
             <CardFooter className="px-3 py-2 border-t bg-gray-50 text-xs text-gray-500">
-              {task.createdAt instanceof Date 
-                ? task.createdAt.toLocaleDateString(undefined, dateOptions) 
+              {task.createdAt instanceof Date
+                ? task.createdAt.toLocaleDateString(undefined, dateOptions)
                 : new Date(task.createdAt).toLocaleDateString(undefined, dateOptions)}
             </CardFooter>
           </Card>
