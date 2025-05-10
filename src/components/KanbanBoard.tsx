@@ -52,15 +52,17 @@ const KanbanBoard: React.FC = () => {
       setActiveColumn(data.current.column);
     } else if (data?.current?.type === 'task') {
       const task = data.current.task;
-      const columnId = active.data.current.sortable.containerId;
-      setActiveTask({ task, columnId });
+      const columnId = data.current?.sortable?.containerId;
+      if (task && columnId) {
+        setActiveTask({ task, columnId });
+      }
     }
   };
 
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     
-    if (!over) return;
+    if (!over || !activeBoard) return;
     
     const activeId = active.id;
     const overId = over.id;
@@ -78,21 +80,32 @@ const KanbanBoard: React.FC = () => {
     // If we're dragging a task over another task
     if (isActiveTask && isOverTask) {
       // Get the column IDs
-      const activeColumnId = active.data.current.sortable.containerId;
-      const overColumnId = over.data.current.sortable.containerId;
+      const activeColumnId = active.data.current?.sortable?.containerId;
+      const overColumnId = over.data.current?.sortable?.containerId;
       
-      if (!activeBoard) return;
+      if (!activeColumnId || !overColumnId) return;
       
       // Find the indices
       const activeColumnIndex = activeBoard.columns.findIndex(col => col.id === activeColumnId);
       const overColumnIndex = activeBoard.columns.findIndex(col => col.id === overColumnId);
       
-      const activeTaskIndex = activeBoard.columns[activeColumnIndex].tasks.findIndex(
+      // Check if columns exist
+      if (activeColumnIndex === -1 || overColumnIndex === -1) return;
+      
+      const activeColumn = activeBoard.columns[activeColumnIndex];
+      const overColumn = activeBoard.columns[overColumnIndex];
+      
+      if (!activeColumn || !overColumn) return;
+      
+      const activeTaskIndex = activeColumn.tasks.findIndex(
         task => task.id === activeId
       );
-      const overTaskIndex = activeBoard.columns[overColumnIndex].tasks.findIndex(
+      const overTaskIndex = overColumn.tasks.findIndex(
         task => task.id === overId
       );
+      
+      // Check if tasks exist
+      if (activeTaskIndex === -1 || overTaskIndex === -1) return;
       
       // If the task is dragged within the same column
       if (activeColumnId === overColumnId) {
@@ -118,17 +131,26 @@ const KanbanBoard: React.FC = () => {
     
     // If we're dragging a task over a column
     if (isActiveTask && isOverColumn) {
-      const activeColumnId = active.data.current.sortable.containerId;
+      const activeColumnId = active.data.current?.sortable?.containerId;
       const overColumnId = overId as string;
       
-      if (!activeBoard) return;
+      if (!activeColumnId || !overColumnId) return;
       
       const activeColumnIndex = activeBoard.columns.findIndex(col => col.id === activeColumnId);
       const overColumnIndex = activeBoard.columns.findIndex(col => col.id === overColumnId);
       
-      const activeTaskIndex = activeBoard.columns[activeColumnIndex].tasks.findIndex(
+      if (activeColumnIndex === -1 || overColumnIndex === -1) return;
+      
+      const activeColumn = activeBoard.columns[activeColumnIndex];
+      const overColumn = activeBoard.columns[overColumnIndex];
+      
+      if (!activeColumn || !overColumn) return;
+      
+      const activeTaskIndex = activeColumn.tasks.findIndex(
         task => task.id === activeId
       );
+      
+      if (activeTaskIndex === -1) return;
       
       // Add the task to the end of the column
       moveTask(
@@ -136,7 +158,7 @@ const KanbanBoard: React.FC = () => {
         activeColumnId,
         overColumnId,
         activeTaskIndex,
-        activeBoard.columns[overColumnIndex].tasks.length
+        overColumn.tasks.length
       );
     }
   };
@@ -205,10 +227,10 @@ const KanbanBoard: React.FC = () => {
       <div className="flex-1 overflow-x-auto h-full p-4">
         <div className="flex h-full gap-4">
           <SortableContext 
-            items={activeBoard.columns.map(col => col.id)} 
+            items={activeBoard?.columns?.map(col => col.id) || []} 
             strategy={horizontalListSortingStrategy}
           >
-            {activeBoard.columns.map(column => (
+            {activeBoard?.columns.map(column => (
               <ColumnContainer 
                 key={column.id} 
                 column={column} 
