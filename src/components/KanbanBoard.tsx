@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   DndContext, 
@@ -166,7 +165,7 @@ const KanbanBoard: React.FC = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     
-    if (!over) {
+    if (!over || !activeBoard) {
       setActiveColumn(null);
       setActiveTask(null);
       return;
